@@ -446,3 +446,109 @@ class Timer {
         clearInterval(this.timerInterval);
     }
 }
+class Loader {
+    constructor(game) {
+        this.game = game;
+        this.ctx = null;
+        this.dots = [];
+        this.numberOfDots = 20;
+        this.img = new Image();
+        this.img.src = "./Image/logo1.png";
+        this.imgLoaded = false;
+        this.img.onload = () => {
+            this.imgLoaded = true;
+            this.draw();
+        };
+        this.animationInterval = null;
+        this.rotateAnimation = null;
+        this.init();
+    }
+    init() {
+        const canvas = document.querySelector("#canvas");
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        this.ctx = canvas.getContext("2d");
+    }
+
+    updateDots() {
+        this.dots.forEach((dot) => {
+            const dotSize = canvas.offsetWidth * 0.025;
+            const radius = (canvas.offsetWidth - canvas.offsetWidth * 0.1) / 2;
+            dot.updateSizeRadius(dotSize, radius);
+        });
+    }
+
+    createDots(effect) {
+        this.dots = [];
+        const dotSize = canvas.width * 0.025;
+        const radius = (canvas.width - canvas.width * 0.1) / 2;
+        const color = "#fff";
+        for (let i = 0; i < this.numberOfDots; i++) {
+            const angle = (i / this.numberOfDots) * 2 * Math.PI;
+            const opacity = effect ? i / this.numberOfDots : 1;
+            const dot = new Dot(this, this.ctx, angle, radius, dotSize, color, opacity);
+            this.dots.push(dot);
+        }
+    }
+    draw() {
+        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.drawImage();
+        this.dots.forEach((dot) => {
+            dot.draw();
+        });
+    }
+    drawImage() {
+        if (this.imgLoaded) {
+            const imgWidth = canvas.width - canvas.width * 0.15;
+            const imgHeight = canvas.width - canvas.width * 0.15;
+            this.ctx.globalAlpha = 1;
+            this.ctx.drawImage(
+                this.img,
+                (canvas.width - imgWidth) / 2,
+                (canvas.width - imgWidth) / 2,
+                imgWidth,
+                imgHeight
+            );
+        }
+    }
+    showWithFlickerEffect() {
+        clearInterval(this.animationInterval);
+        this.createDots(false);
+        this.flickerEffect();
+    }
+    flickerEffect() {
+        this.animationInterval = setInterval(() => {
+            this.dots.forEach((dot) => {
+                dot.updateColor();
+            });
+            this.draw();
+        }, 100);
+    }
+
+    showWithRotateEffect() {
+        clearInterval(this.animationInterval);
+        this.createDots(false);
+        this.rotateEffect();
+    }
+    rotateEffect() {
+        this.dots.forEach((dot) => {
+            dot.updatePosition();
+        });
+        this.draw();
+        this.rotateAnimation = requestAnimationFrame(() => this.rotateEffect());
+    }
+
+    showWithLoadingEffect() {
+        cancelAnimationFrame(this.rotateAnimation);
+        this.createDots(true);
+        this.loadingEffect();
+    }
+    loadingEffect() {
+        this.animationInterval = setInterval(() => {
+            this.dots.forEach((dot) => {
+                dot.updateOpacity();
+            });
+            this.draw();
+        }, 100);
+    }
+}
