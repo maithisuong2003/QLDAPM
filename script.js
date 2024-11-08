@@ -419,3 +419,30 @@ class Dot {
         this.radius = radius;
     }
 }
+class Timer {
+    constructor(game) {
+        this.game = game;
+        this.currentTime = TIME;
+        this.timerElement = document.querySelector(".timer");
+        this.timerInterval = null;
+    }
+    updateTime() {
+        this.timerInterval = setInterval(() => {
+            if (this.currentTime == 0) {
+                this.stopUpdateTime();
+                this.game.questionBgSound.stop();
+                this.game.timeUpSound.start();
+                this.game.timeUpSound.onEnd(() => this.game.stopGame());
+                return;
+            }
+            this.reset(this.currentTime - 1);
+        }, 1000);
+    }
+    reset(time) {
+        this.currentTime = time;
+        this.timerElement.innerHTML = this.currentTime;
+    }
+    stopUpdateTime() {
+        clearInterval(this.timerInterval);
+    }
+}
