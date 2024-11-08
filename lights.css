@@ -1,0 +1,159 @@
+.lights {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    aspect-ratio: 1920/1080;
+    z-index: 1;
+}
+.lights.hidden .lights-brightness{
+    visibility: hidden;
+}
+.lights.hidden .lighting-positions{
+    visibility: hidden;
+}
+.light {
+    width: 1%;
+    aspect-ratio: 1/1;
+    z-index: 0;
+    user-select: none;
+}
+
+/* ------------------------------------ */
+
+.lights.rotate > .light .light-socket:first-child {
+    animation: light-socket-rotate-1 var(--animation-timing) linear infinite forwards;
+}
+.lights.rotate > .light .light-socket:last-child {
+    animation: light-socket-rotate-2 var(--animation-timing) linear infinite forwards;
+}
+
+/* ------------------------------------ */
+
+.lights.rotate > .light .light-brightness:first-child {
+    animation: light-rotate-1 var(--animation-timing) linear infinite none;
+}
+.lights.rotate > .light .light-brightness:last-child {
+    animation: light-rotate-2 var(--animation-timing) linear infinite none;
+}
+/* ------------------------------------ */
+
+.lights.blur > .light .lights-brightness {
+    animation: brightness-blur 3s linear 1 none;
+    visibility: hidden;
+}
+
+.lights.rotate > .light .light-brightness:first-child .brightness {
+    animation: brightness-rotate-1 var(--animation-timing) linear infinite none;
+}
+.lights.rotate > .light .light-brightness:last-child .brightness {
+    animation: brightness-rotate-2 var(--animation-timing) linear infinite none;
+} 
+
+.lights.blur > .light .lighting-positions {
+    animation: lighting-position-blur 3s linear 1 none;
+    visibility: hidden;
+}
+.lights.rotate > .light .lighting-position:first-child {
+    animation: light-running-1 var(--animation-timing) linear infinite none;
+}
+
+.lights.rotate > .light .lighting-position:last-child {
+    animation: light-running-2 var(--animation-timing) linear infinite none;
+}
+
+/* ------------------------------------ */
+
+.light-sockets {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+.light-socket {
+    width: 100%;
+    aspect-ratio: 1/1.5;
+    background-color: black;
+    transform: rotateZ(0deg);
+    transform-origin: top center;
+    position: absolute;
+}
+.light-socket::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    z-index: 1;
+    background-color: #1e2f39;
+    border-bottom-left-radius: 10%;
+    border-bottom-right-radius: 10%;
+}
+.light-socket::after {
+    content: "";
+    width: 80%;
+    aspect-ratio: 1 / 1;
+    position: absolute;
+    bottom: -19%;
+    left: 50%;
+    transform: translateX(-45%) rotateX(71deg);
+    background-color: #06d4ff;
+    border-top-right-radius: 30%;
+    border-top-left-radius: 30%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    z-index: 1;
+}
+
+.nen {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+}
+
+.lights-brightness {
+    position: relative;
+    top: 0;
+    z-index: 0;
+}
+
+.light-brightness {
+    transform-origin: top center;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.brightness {
+    transform: scaleY(2.9) scaleX(1.32);
+    font-size: 2711%;
+    transform-origin: top center;
+    position: relative;
+    filter: blur(1px);
+    line-height: 0.58;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to top, #00b8ff14 0%, #3cadff9e 100%);
+}
+.lighting-positions {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.lighting-position {
+    position: absolute;
+    left: 50%;
+    width: 5.7%;
+    aspect-ratio: 116 / 115;
+    border-radius: 50%;
+    transform: translateX(-50%) scaleX(3.5);
+    filter: blur(1px);
+    top: 71%;
+    background-image: linear-gradient(to top, #00b3f8d6 0%, #03a5f22e 100%)
+}
