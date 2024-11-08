@@ -375,3 +375,47 @@ class Screen {
         btnAdvisoryGroup.innerHTML = ` <img src='Image/advisory-group.webp' alt=''>`;
     }
 }
+class Dot {
+    constructor(loader, ctx, angle, radius, size, color, opacity) {
+        this.ctx = ctx;
+        this.angle = angle;
+        this.radius = radius;
+        this.color = color;
+        this.size = size;
+        this.opacity = opacity;
+        this.loader = loader;
+    }
+    draw() {
+        const x = canvas.width / 2 + Math.cos(this.angle) * this.radius;
+        const y = canvas.height / 2 + Math.sin(this.angle) * this.radius;
+        const blurAmount = 5;
+        this.ctx.shadowColor = "blue";
+        this.ctx.shadowBlur = blurAmount;
+        // this.ctx.strokeStyle = "black";
+        // this.ctx.lineWidth = 2;
+        this.ctx.globalAlpha = this.opacity;
+        this.ctx.fillStyle = this.color;
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, this.size, 0, Math.PI * 2, false);
+        this.ctx.fill();
+        // this.ctx.stroke();
+        this.ctx.closePath();
+    }
+    updateOpacity() {
+        this.opacity = this.opacity - 1 / this.loader.numberOfDots;
+        if (this.opacity <= 0) this.opacity = 1;
+    }
+    updatePosition() {
+        this.angle += 0.02;
+    }
+    updateColor() {
+        this.opacity = this.opacity - 1 / this.loader.numberOfDots;
+        if (this.opacity <= 0) this.opacity = 1;
+    }
+
+    updateSizeRadius(size, radius) {
+        console.log("new Size" + size, radius);
+        this.size = size;
+        this.radius = radius;
+    }
+}
