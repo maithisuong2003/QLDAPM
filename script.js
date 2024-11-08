@@ -180,3 +180,45 @@ class AdvisoryGroup {
         this.dataAnswers = [];
     }
 }
+class Answer {
+    constructor(game, answer, index) {
+        this.game = game;
+        this.isSelected = false;
+        this.index = index;
+        this.answer = answer.text;
+        this.id = answer.id;
+        this.isRemoved = false;
+        this.element = document.querySelectorAll(".answer")[this.index];
+    }
+    onBtnAnswerClick(handleUserSelectAnswer) {
+        this.element.addEventListener("click", () => {
+            if (this.game.isSelectedAnswer || this.game.isUsingAnotherHelper) return;
+            this.showSelectedAnswer();
+            handleUserSelectAnswer(this.id, this.index);
+        });
+    }
+    showSelectedAnswer() {
+        this.element.classList.add("selected");
+        this.element.querySelector("img").src = this.index % 2 == 0 ? "./Image/selected.png" : "./Image/selected-r.png";
+    }
+    showCorrectAnswer() {
+        this.element.classList.add("correctAnswer");
+        this.element.querySelector("img").src = this.index % 2 == 0 ? "./Image/correct.png" : "./Image/correct-r.png";
+    }
+    reset() {
+        this.element.classList.forEach((name) => {
+            if (name !== "answer") {
+                this.element.classList.remove(name);
+            }
+        });
+        this.element.classList.remove("correctAnswer");
+        this.element.querySelector("img").src = this.index % 2 == 0 ? "./Image/normal-l.png" : "./Image/normal-r.png";
+    }
+    remove() {
+        this.element.classList.add("hidden");
+    }
+
+    render() {
+        this.element.querySelector("span").innerHTML = this.answer;
+    }
+}
