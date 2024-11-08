@@ -47,3 +47,36 @@ class Popup {
         return callback && callback();
     }
 }
+class Sound {
+  constructor(fileName) {
+      this.fileName = fileName;
+      this.audio = new Audio(this.fileName);
+  }
+
+  isStopped() {
+      return this.audio.paused;
+  }
+
+  start(shouldRepeat) {
+      if (this.audio.duration > 0) {
+          this.audio.currentTime = 0;
+      }
+      this.audio.currentTime = 0;
+      this.audio.play();
+      this.audio.onended = () => {
+          if (shouldRepeat) this.start(true);
+      };
+  }
+  onEnd(callback) {
+      if (typeof callback == "function") {
+          this.audio.onended = callback;
+      }
+  }
+  stop() {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+  }
+  update(filename) {
+      this.fileName = filename;
+  }
+}
