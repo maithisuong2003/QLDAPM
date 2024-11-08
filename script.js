@@ -80,3 +80,103 @@ class Sound {
       this.fileName = filename;
   }
 }
+
+class AdvisoryGroup {
+    constructor(game) {
+        this.game = game;
+        this.selectedCount = 0;
+        this.dataAnswers = null;
+        this.persons = document.querySelectorAll(".advisory-group > .person");
+        this.listener();
+    }
+    listener() {
+        if (!this.persons) return;
+        this.persons.forEach((person, index) => {
+            person.addEventListener("click", () => {
+                this.onBtnPersonClick(index);
+            });
+        });
+    }
+    updateAnswerData(answerId) {
+        if (!answerId) return;
+        const dataAnswers = {
+            1: {
+                _data: ["A", "A", "A"],
+                _remain: ["B", "C", "D"],
+            },
+            2: {
+                _data: ["B", "B", "B"],
+                _remain: ["A", "C", "D"],
+            },
+            3: {
+                _data: ["C", "C", "C"],
+                _remain: ["A", "B", "D"],
+            },
+            4: {
+                _data: ["D", "D", "D"],
+                _remain: ["A", "B", "C"],
+            },
+        };
+        const _dataAnswers = dataAnswers[answerId]._data;
+        const dataRemain = dataAnswers[answerId]._remain;
+        const isSomeAnswerRemoved = this.game.answers.some((answer) => answer.isRemoved === true);
+        let onlyWrongAnswer = null;
+        if (isSomeAnswerRemoved) {
+            this.game.answers.forEach((answer, index) => {
+                if (answer.id != answerId && !answer.isRemoved) {
+                    onlyWrongAnswer = ["A", "B", "C", "D"][index];
+                }
+            });
+        }
+        while (_dataAnswers.length < 5) {
+            const insertIndex = Math.round(Math.random() * 3);
+            const insertAnswer = isSomeAnswerRemoved ? onlyWrongAnswer : dataRemain[Math.round(Math.random() * 2)];
+            _dataAnswers.splice(insertIndex, 0, insertAnswer);
+        }
+        this.dataAnswers = _dataAnswers;
+        console.log(this.dataAnswers);
+    }
+
+    onBtnPersonClick(index) {
+        if (!this.persons) return;
+        const person = this.persons[index];
+        if (person.classList.contains("show")) return;
+        if (this.selectedCount == 3) {
+            alert("Ban đã chọn đủ 3 người trong tổ tư vấn!");
+            return;
+        }
+        if (this.selectedCount == 2) {
+            this.game.isUsingAnotherHelper = false;
+            this.game.waitSelectAdvisoryGroupSound.stop();
+            this.game.selectAdvisoryGroupDoneSound.start();
+            this.game.selectAdvisoryGroupDoneSound.onEnd(() => {
+                this.game.questionBgSound.start(true);
+                this.game.timer.updateTime();
+            });
+        }
+        this.showAnswer(index);
+        person.classList.add("show");
+        this.selectedCount++;
+    }
+
+    showAnswer(index) {
+        if (!this.dataAnswers) return;
+        if (this.persons.length < 1) return;
+        const element = this.persons[index].querySelector(".person-answer");
+        element.innerText = this.dataAnswers[index];
+    }
+    showHelperList() {
+        document.querySelector(".advisory-group").classList.add("show");
+    }
+    hideHelperList() {
+        document.querySelector(".advisory-group").classList.remove("show");
+    }
+
+    reset() {
+        this.persons.forEach((person) => {
+            person.classList.remove("show");
+        });
+        this.selectedCount = 0;
+        this.dataAnswers = [];
+    }
+}
