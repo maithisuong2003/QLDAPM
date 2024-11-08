@@ -1,11 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ai là triệu phú</title>
+    <link rel="stylesheet" href="./lights.css" as="style">
+    <link rel="stylesheet" href="./css.css" as="style">
+    <script src="./constant.js" defer></script>
+    <script src="./script.js" defer></script>
+
 </head>
+
 <body>
-    
+    <div id="game" class="screen play-screen">
+        <div class="game">
+            <div class="loading">
+                <!-- <div class="loading-bar">
+                    <div class="bar">
+                        <span class="process-bar"></span>
+                    </div>
+                </div> -->
+                <div class="alert hidden">
+                    <div class="alert-content">
+                        Nhắc nhở: Bật âm thanh để có trải nghiệm tốt hơn!
+                    </div>
+                    <button id="alert-btn">OK</button>
+                </div>
+            </div>
+            <div class="lights hidden">
+                <div class="light ">
+                    <div class="light-sockets">
+                        <div class="light-socket">
+                        </div>
+                        <div class="light-socket">
+                        </div>
+                    </div>
+                    <div class="lights-brightness">
+                        <div class="light-brightness">
+                            <div class="brightness ">
+                                <span>&#9650;</span>
+                            </div>
+                        </div>
+
+                        <div class="light-brightness">
+                            <div class="brightness ">
+                                <span>&#9650;</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lighting-positions">
+                        <div class="lighting-position"></div>
+                        <div class="lighting-position"></div>
+                    </div>
+                    <img class='nen' src='./Image/background-cut.jpg' alt=''>
+
+                </div>
+
+            </div>
+            <div class="popup translate-middle">
+                <div class="content">
+                </div>
+                <button class="btn-confirm ">Tiếp tục</button>
+            </div>
+            <button class="btn-start hidden">
+                Đi tới
+            </button>
+            <div class="timer">00</div>
+            <div class="prize-money hidden display">
+                <div class="helper">
+                    <button id="btn-remove-half" class="btn-helper">
+                        <img class='' src='Image/50-50.webp' alt=''>
+                    </button>
+                    <button id="btn-advisory-help" class="btn-helper">
+                        <img class='' src='Image/advisory-group.webp' alt=''>
+                    </button>
+                    <button id="btn-audience-help" class="btn-helper">
+                        <img class='' src='Image/ask-viewer.webp' alt=''>
+                    </button>
+                    <button id="btn-call" class="btn-helper">
+                        <img class='' src='Image/call.webp' alt=''>
+                    </button>
+                </div>
+                <div class="table">
+                </div>
+            </div>
+            <div class="game-qa hidden display">
+                <div class="question">
+                    <img width="100%" height="auto" src='./Image/question.png' alt=''>
+                    <span>Câu 1:</span>
+                </div>
+                <div class="answers">
+                    <div class="answer">
+                        <img width="100%" height="auto" src="Image/normal-l.png" alt=''>
+                        <span>A.</span>
+                    </div>
+                    <div class="answer">
+                        <img width="100%" height="auto" src="Image/normal-r.png" alt=''>
+                        <span>B.</span>
+                    </div>
+                    <div class="answer">
+                        <img width="100%" height="auto" src="Image/normal-l.png" alt=''>
+                        <span>C.</span>
+                    </div>
+                    <div class="answer">
+                        <img width="100%" height="auto" src="Image/normal-r.png" alt=''>
+                        <span>D.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="table-viewer-answer hidden ">
+                <div class="table-col">
+                    <div class="result-text">
+                        0%
+                    </div>
+                    <div class="result">
+                    </div>
+                </div>
+                <div class="table-col">
+                    <div class="result-text">
+                        0%
+                    </div>
+                    <div class="result">
+                    </div>
+                </div>
+                <div class="table-col">
+                    <div class="result-text">
+                        0%
+                    </div>
+                    <div class="result">
+                    </div>
+                </div>
+                <div class="table-col">
+                    <div class="result-text">
+                        0%
+                    </div>
+                    <div class="result">
+                    </div>
+                </div>
+            </div>
+            <div class="advisory-group">
+                <div class="person">
+                    <button>
+                        <img class='avatar' src='./Image/avatar.jpg' alt=''>
+                    </button>
+                    <div class="person-answer">
+                        
+                    </div>
+                </div>
+                <div class="person">
+                    <button>
+                        <img class='avatar' src='./Image/avatar.jpg' alt=''>
+                    </button>
+                    <div class="person-answer">
+                        
+                    </div>
+                </div>
+                <div class="person">
+                    <button>
+                        <img class='avatar' src='./Image/avatar.jpg' alt=''>
+                    </button>
+                    <div class="person-answer">
+                        
+                    </div>
+                </div>
+                <div class="person">
+                    <button>
+                        <img class='avatar' src='./Image/avatar.jpg' alt=''>
+                    </button>
+                    <div class="person-answer">
+                        
+                    </div>
+                </div>
+                <div class="person">
+                    <button>
+                        <img class='avatar' src='./Image/avatar.jpg' alt=''>
+                    </button>
+                    <div class="person-answer">
+                    </div>
+                </div>
+            </div>
+            <canvas id="canvas" class="topView"></canvas>
+
+            <div class="current-prize-money hidden">
+                <div class="container">
+                    <img class='' src='Image/current-money.png' alt=''>
+                    <span>1.000.0000</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </body>
+
+
 </html>
