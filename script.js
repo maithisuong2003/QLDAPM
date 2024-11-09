@@ -892,4 +892,18 @@ showGuidePopup() {
         this.popup.show();
         this.popup.render(6000);
     }
+    listener() {
+        this.screen.onBtnRemoveAnswerClick(() => {
+            this.handleBtnRemoveAnswerClick();
+        });
+        this.screen.onBtnAskAudienceClick(() => {
+            this.handleBtnAskViewerClick();
+        });
+        this.screen.onBtnAskAdvisoryGroupClick(() => {
+            this.handleBtnAskAdvisoryClick();
+        });
+        this.screen.onBtnStartGameClick(() => {
+            this.handleStartGame();
+        });
+    }
 }
