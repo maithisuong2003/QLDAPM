@@ -880,4 +880,16 @@ showGuidePopup() {
         }
         this.startGame();
     }
+    handleBtnAskAdvisoryClick() {
+        this.advisoryGroupHelper.updateAnswerData(this.question.correctId);
+        this.screen.hideAnswerTable();
+        this.popup.update(_script.advisoryGroupHelper, () => {
+            this.popup.hide();
+            this.advisoryGroupHelper.showHelperList();
+            this.questionBgSound.stop();
+            this.waitSelectAdvisoryGroupSound.start(true);
+        });
+        this.popup.show();
+        this.popup.render(6000);
+    }
 }
