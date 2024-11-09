@@ -47,40 +47,40 @@ class Popup {
         return callback && callback();
     }
 }
+
 class Sound {
-  constructor(fileName) {
-      this.fileName = fileName;
-      this.audio = new Audio(this.fileName);
-  }
+    constructor(fileName) {
+        this.fileName = fileName;
+        this.audio = new Audio(this.fileName);
+    }
 
-  isStopped() {
-      return this.audio.paused;
-  }
+    isStopped() {
+        return this.audio.paused;
+    }
 
-  start(shouldRepeat) {
-      if (this.audio.duration > 0) {
-          this.audio.currentTime = 0;
-      }
-      this.audio.currentTime = 0;
-      this.audio.play();
-      this.audio.onended = () => {
-          if (shouldRepeat) this.start(true);
-      };
-  }
-  onEnd(callback) {
-      if (typeof callback == "function") {
-          this.audio.onended = callback;
-      }
-  }
-  stop() {
-      this.audio.pause();
-      this.audio.currentTime = 0;
-  }
-  update(filename) {
-      this.fileName = filename;
-  }
+    start(shouldRepeat) {
+        if (this.audio.duration > 0) {
+            this.audio.currentTime = 0;
+        }
+        this.audio.currentTime = 0;
+        this.audio.play();
+        this.audio.onended = () => {
+            if (shouldRepeat) this.start(true);
+        };
+    }
+    onEnd(callback) {
+        if (typeof callback == "function") {
+            this.audio.onended = callback;
+        }
+    }
+    stop() {
+        this.audio.pause();
+        this.audio.currentTime = 0;
+    }
+    update(filename) {
+        this.fileName = filename;
+    }
 }
-
 class AdvisoryGroup {
     constructor(game) {
         this.game = game;
@@ -180,6 +180,7 @@ class AdvisoryGroup {
         this.dataAnswers = [];
     }
 }
+
 class Answer {
     constructor(game, answer, index) {
         this.game = game;
@@ -222,6 +223,7 @@ class Answer {
         this.element.querySelector("span").innerHTML = this.answer;
     }
 }
+
 class Screen {
     constructor(game) {
         this.game = game;
@@ -409,8 +411,8 @@ class Dot {
         this.angle += 0.02;
     }
     updateColor() {
-        this.opacity = this.opacity - 1 / this.loader.numberOfDots;
-        if (this.opacity <= 0) this.opacity = 1;
+         this.opacity = this.opacity - 1 / this.loader.numberOfDots;
+         if (this.opacity <= 0) this.opacity = 1;
     }
 
     updateSizeRadius(size, radius) {
@@ -603,11 +605,13 @@ class Game {
         this.delay(() => this.screen.updateLightsEffectTiming("4s"), 12000);
         this.screen.showStartBtn();
     }
+
     delay(func, timing) {
         setTimeout(() => {
             func();
         }, timing);
     }
+
     handleUserSelectAnswer(answerId, index) {
         this.isSelectedAnswer = true;
         this.startSound.stop(); // need remove
@@ -679,7 +683,6 @@ class Game {
             }, 4000);
         }
     }
-
     checkAnswer(answerId, correctAnswerProcess) {
         if (answerId == this.question.correctId) {
             correctAnswerProcess();
@@ -699,6 +702,7 @@ class Game {
         this.isSelectedAnswer = false;
         this.timer.reset(TIME);
     }
+
     showCorrectAnswer() {
         this.answers.forEach((answer) => {
             if (answer.id == this.question.correctId) {
@@ -713,4 +717,229 @@ class Game {
         return true;
     }
 
+    createAnswer() {
+        this.answers = [];
+        const answers = this.question.answers;
+        answers.forEach((answer, index) => {
+            this.answers.push(new Answer(this, answer, index));
+        });
+    }
+
+    showQuestion() {
+        this.createAnswer();
+        this.screen.updatePrizeMoney();
+        const questionElement = document.querySelector(".question > span");
+        questionElement.innerHTML = this.question.question;
+        this.answers.forEach((answer) => {
+            answer.reset();
+            answer.render();
+            answer.onBtnAnswerClick((id, index) => {
+                this.handleUserSelectAnswer(id, index);
+            });
+        });
+    }
+
+    readQuestion() {
+        this.questionSound = new Sound(this.question.sound);
+        this.questionSound.start();
+        this.questionSound.onEnd(() => {
+            this.timer.updateTime();
+        });
+        this.questionBgSound.isStopped() && this.questionBgSound.start(true);
+    }
+    handleBtnRemoveAnswerClick() {
+        let deletedCount = 0;
+        let deletedIndex = Infinity;
+        while (deletedCount < 2) {
+            const deleteIndex = Math.floor(Math.random() * this.answers.length);
+            if (this.question.correctId == this.answers[deleteIndex].id || deletedIndex == deleteIndex) continue;
+            this.answers[deleteIndex].remove();
+            this.answers[deleteIndex].isRemoved = true;
+            deletedIndex = deleteIndex;
+            deletedCount++;
+        }
+        this.isUsingAnotherHelper = false;
+    }
+
+    updateAudienceAnswer(percents) {
+        const answerCol = document.querySelectorAll(".result");
+        const answerNumber = document.querySelectorAll(".result-text");
+        percents.forEach((percent, index) => {
+            const maxHeight = document.querySelector(".table-col").offsetHeight * (90 / 100);
+            const height = (maxHeight * percent) / 100 < 15 ? 15 : (maxHeight * percent) / 100 + 15;
+            answerCol[index].style.height = `${height}px`;
+            answerNumber[index].innerHTML = percent + "%";
+        });
+    }
+
+    handleBtnAskViewerClick() {
+        let sumPercent = 70;
+        const percents = [0, 0, 0, 0];
+        for (let i = 0; i < 4; i++) {
+            if (this.answers[i].isRemoved) {
+                continue;
+            }
+            if (this.answers[i].id == this.question.correctId) {
+                percents[i] = 30;
+            }
+            if (i == 3) {
+                percents[3] += sumPercent;
+                sumPercent = 0;
+                continue;
+            }
+            const randomPercent = Math.round(Math.random() * sumPercent);
+            percents[i] += randomPercent;
+            sumPercent -= randomPercent;
+        }
+        if (sumPercent != 0) {
+            let foundOne = false;
+            for (let i = 0; i < 4; i++) {
+                if (this.answers[i].isRemoved) continue;
+                if (foundOne) {
+                    percents[i] += Math.ceil(sumPercent / 2);
+                    continue;
+                }
+                percents[i] += Math.floor(sumPercent / 2);
+                foundOne = true;
+            }
+        }
+        this.updateAudienceAnswer(percents);
+        this.isUsingAnotherHelper = false;
+    }
+    startGame() {
+        this.popup.hide();
+        const display = document.querySelectorAll(".game>div.display");
+        display.forEach((element) => {
+            element.classList.remove("hidden");
+        });
+        this.showQuestion();
+        this.readQuestion();
+        this.questionBgSound.start(true);
+    }
+
+    stopGame() {
+        const display = document.querySelectorAll(".game>div.display");
+        display.forEach((element) => {
+            element.classList.add("hidden");
+        });
+        this.screen.hideAnswerTable();
+        this.advisoryGroupHelper.hideHelperList();
+        this.gameOverSound.start();
+        this.screen.showLights(1000000000, "4s");
+        this.popup.update(_script.stopGame(this.questionNumber), () => {
+            this.popup.update(_script.playAgain, () => {
+                this.popup.hide();
+                this.gameOverSound.stop();
+                this.delay(() => {
+                    this.resetGame();
+                }, 300);
+            });
+            this.popup.render();
+        });
+        this.delay(() => {
+            this.popup.show();
+            this.popup.render(5000);
+        }, 300);
+    }
+    resetGame() {
+        this.isPlayAgain = true;
+        this.init();
+        this.screen.reset();
+        this.timer.reset(TIME);
+        this.advisoryGroupHelper.reset();
+        this.updateAudienceAnswer([0, 0, 0, 0]);
+    }
+
+    showGuidePopup() {
+        this.popup.show();
+        this.delay(() => {
+            this.explainRuleSound = new Sound("Sound/explain-rule.mp3");
+            this.explainRuleBgSound = new Sound("Sound/explain-rule-bg-sound.mp3");
+            this.explainRuleSound.start();
+            this.explainRuleBgSound.start(true);
+            this.popup.update(_script.introducePart1, () => {
+                this.explainRuleSound.stop();
+                this.explainRuleBgSound.stop();
+                this.startGameSound.start();
+                this.popup.update(_script.userAlready, () => {
+                    this.startGameSound.stop();
+                    this.startGame();
+                    this.screen.hideLights();
+                });
+                this.popup.render(3000);
+                this.startGameSound.onEnd(() => this.startGame());
+            });
+            this.popup.render(14000);
+        }, 500);
+        // update sự kiện tiếp theo
+    }
+
+    handleStartGame() {
+        this.startSound.stop();
+        if (!this.isPlayAgain) {
+            this.showGuidePopup();
+            return;
+        }
+        this.startGame();
+    }
+    handleBtnAskAdvisoryClick() {
+        this.advisoryGroupHelper.updateAnswerData(this.question.correctId);
+        this.screen.hideAnswerTable();
+        this.popup.update(_script.advisoryGroupHelper, () => {
+            this.popup.hide();
+            this.advisoryGroupHelper.showHelperList();
+            this.questionBgSound.stop();
+            this.waitSelectAdvisoryGroupSound.start(true);
+        });
+        this.popup.show();
+        this.popup.render(6000);
+    }
+    listener() {
+        this.screen.onBtnRemoveAnswerClick(() => {
+            this.handleBtnRemoveAnswerClick();
+        });
+        this.screen.onBtnAskAudienceClick(() => {
+            this.handleBtnAskViewerClick();
+        });
+        this.screen.onBtnAskAdvisoryGroupClick(() => {
+            this.handleBtnAskAdvisoryClick();
+        });
+        this.screen.onBtnStartGameClick(() => {
+            this.handleStartGame();
+        });
+    }
+}
+class Responsive {
+    constructor() {
+        this.maintainAspectRatio();
+        this.init();
+    }
+    init() {
+        window.addEventListener("resize", this.maintainAspectRatio);
+        window.addEventListener("orientationchange", this.maintainAspectRatio);
+    }
+    listener(callbackFunc) {
+        window.addEventListener("resize", () => {
+            callbackFunc();
+        });
+        window.addEventListener("orientationchange", () => {
+            callbackFunc();
+        });
+    }
+    maintainAspectRatio() {
+        const container = document.querySelector("#game");
+        const aspectRatio = 1920 / 1080;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        if (windowWidth / windowHeight > aspectRatio) {
+            // Màn hình rộng hơn tỷ lệ 16:9
+            container.style.height = `100%`;
+            container.style.width = `${windowHeight * aspectRatio}px`;
+        } else {
+            // Màn hình cao hơn tỷ lệ 16:9
+            container.style.width = `100%`;
+            container.style.height = `${windowWidth / aspectRatio}px`;
+        }
+        container.style.fontSize = `${container.offsetWidth / 106}px`;
+    }
 }
