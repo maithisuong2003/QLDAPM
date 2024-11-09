@@ -699,18 +699,18 @@ class Game {
         this.isSelectedAnswer = false;
         this.timer.reset(TIME);
     }
+    showCorrectAnswer() {
+        this.answers.forEach((answer) => {
+            if (answer.id == this.question.correctId) {
+                answer.showCorrectAnswer();
+            }
+        });
+    }
+    isCanUsed(helper) {
+        if (this.isSelectedAnswer) return false;
+        if (this.helpers[helper]) return false;
+        if (this.isUsingAnotherHelper) return false;
+        return true;
+    }
 
-}
-showCorrectAnswer() {
-    this.answers.forEach((answer) => {
-        if (answer.id == this.question.correctId) {
-            answer.showCorrectAnswer();
-        }
-    });
-}
-isCanUsed(helper) {
-    if (this.isSelectedAnswer) return false;
-    if (this.helpers[helper]) return false;
-    if (this.isUsingAnotherHelper) return false;
-    return true;
 }
