@@ -680,4 +680,15 @@ class Game {
         }
     }
 
+    checkAnswer(answerId, correctAnswerProcess) {
+        if (answerId == this.question.correctId) {
+            correctAnswerProcess();
+        } else {
+            this.showCorrectAnswer();
+            this.questionBgSound.stop();
+            this.wrongAnswerSound.start();
+            this.wrongAnswerSound.onEnd(() => this.stopGame());
+        }
+    }
+
 }
