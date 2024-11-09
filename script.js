@@ -608,5 +608,76 @@ class Game {
             func();
         }, timing);
     }
+    handleUserSelectAnswer(answerId, index) {
+        this.isSelectedAnswer = true;
+        this.startSound.stop(); // need remove
+        this.timer.stopUpdateTime();
+        this.questionSound.stop();
+        const process = () => {
+            if (this.questionNumber == 5) {
+                this.questionBgSound.stop();
+                this.questionBgSound = new Sound("Sound/next5BgSound.mp3");
+                const display = document.querySelectorAll(".game>div.display");
+                display.forEach((element) => {
+                    element.classList.add("hidden");
+                });
+                this.screen.hideAnswerTable();
+                this.advisoryGroupHelper.hideHelperList();
+                const prizeMoney = document.querySelector(".current-prize-money");
+                document.querySelector(".current-prize-money span").innerText = PrizeMoney[this.questionNumber];
+                prizeMoney.classList.remove("hidden");
+                const winFirst5Sound = new Sound("Sound/win-5.mp3");
+                const introducePart2 = new Sound("Sound/introduce-part2.mp3");
+                winFirst5Sound.start();
+                this.screen.showLights(8000, "2s");
+                winFirst5Sound.onEnd(() => {
+                    prizeMoney.classList.add("hidden");
+                    this.popup.show();
+                    introducePart2.start();
+                    this.popup.update(_script.introducePart2, () => {
+                        introducePart2.stop();
+                        this.updateQuestion();
+                        this.startGame();
+                    });
+                    this.popup.render(15000);
+                });
+                return;
+            }
+            this.updateQuestion();
+            this.showQuestion();
+            this.readQuestion();
+        };
+        if (this.questionNumber <= 5) {
+            const correctAnswerProcess = () => {
+                const sound = new Sound(`Sound/first5-correct-sound/${index}.mp3`);
+                const bgSound = new Sound(`Sound/first5-correct-sound/correct-sound.mp3`);
+                sound.start();
+                this.delay(() => {
+                    this.showCorrectAnswer();
+                    bgSound.start();
+                    bgSound.onEnd(() => process());
+                }, 2000);
+            };
+            this.delay(() => {
+                this.checkAnswer(answerId, correctAnswerProcess);
+            }, 500);
+            return;
+        }
+        if (this.questionNumber > 5) {
+            this.finalAnswerSound.start();
+            const correctAnswerProcess = () => {
+                this.showCorrectAnswer();
+                this.questionBgSound.stop();
+                const sound = new Sound(`Sound/second5-correct-sound/${index}.mp3`);
+                this.delay(() => this.screen.showLights(2000, "2s"), 5500);
+                sound.start();
+                sound.onEnd(() => process());
+            };
+            this.delay(() => {
+                this.finalAnswerSound.stop();
+                this.checkAnswer(answerId, correctAnswerProcess);
+            }, 4000);
+        }
+    }
 
 }
