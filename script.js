@@ -914,12 +914,10 @@ class Responsive {
         this.maintainAspectRatio();
         this.init();
     }
-
     init() {
         window.addEventListener("resize", this.maintainAspectRatio);
         window.addEventListener("orientationchange", this.maintainAspectRatio);
     }
-
     listener(callbackFunc) {
         window.addEventListener("resize", () => {
             callbackFunc();
@@ -928,7 +926,6 @@ class Responsive {
             callbackFunc();
         });
     }
-
     maintainAspectRatio() {
         const container = document.querySelector("#game");
         const aspectRatio = 1920 / 1080;
@@ -946,7 +943,7 @@ class Responsive {
         container.style.fontSize = `${container.offsetWidth / 106}px`;
     }
 }
-    class LoadingChecker {
+class LoadingChecker {
     constructor(gameHelper) {
         this.gameHelper = gameHelper;
         this.images = resource.images;
@@ -969,7 +966,7 @@ class Responsive {
     }
     checkAllResourcesLoaded(handleLoaded) {
         let loadingTime = 0;
-        const timeInterval = setInterval(() => {
+        const timeInterval =setInterval(() => {
             loadingTime += 1;
         }, 1000);
         const showAlert = () => {
@@ -1010,150 +1007,76 @@ class Responsive {
                 alert("Có lỗi xảy ra trong quá trình tải âm thanh");
             };
         });
-
-        class LoadingChecker {
-            constructor(gameHelper) {
-                this.gameHelper = gameHelper;
-                this.images = resource.images;
-                this.audios = resource.audios;
-                this.loadedCount = 0;
-            }
-
-            updateProcess() {
-                this.loadedCount += 1;
-                // let sum = this.images.length + this.audios.length;
-                // const percent = (this.loadedCount / sum) * 100;
-                // const processBar = document.querySelector(".process-bar");
-                // processBar.style.width = `${percent}%`;
-            }
-
-            isAllResourceLoaded() {
-                if (this.loadedCount == this.images.length + this.audios.length) {
-                    return true;
-                }
-                return false;
-            }
-
-            checkAllResourcesLoaded(handleLoaded) {
-                let loadingTime = 0;
-                const timeInterval = setInterval(() => {
-                    loadingTime += 1;
-                }, 1000);
-                const showAlert = () => {
-                    this.gameHelper.loader.showWithFlickerEffect();
-                    document.querySelector(".alert").classList.remove("hidden");
-                    document.querySelector("#alert-btn").addEventListener("click", () => handleLoaded());
-                };
-                const _handleLoaded = () => {
-                    clearInterval(timeInterval);
-                    if (loadingTime >= 3) {
-                        return showAlert();
-                    }
-                    setTimeout(() => showAlert(), 3000);
-                };
-                this.images.forEach((imageSrc) => {
-                    const image = new Image();
-                    image.src = imageSrc;
-                    image.onload = () => {
-                        this.updateProcess();
-                        if (this.isAllResourceLoaded()) {
-                            _handleLoaded();
-                        }
-                    };
-                    image.onerror = () => {
-                        alert("Có lỗi xảy ra trong quá trình tải hình ảnh");
-                    };
-                });
-                this.audios.forEach((audioSrc) => {
-                    const audio = new Audio(audioSrc);
-                    audio.preload = "auto";
-                    audio.addEventListener("canplaythrough", () => {
-                        this.updateProcess();
-                        if (this.isAllResourceLoaded()) {
-                            _handleLoaded();
-                        }
-                    });
-                    audio.onerror = () => {
-                        alert("Có lỗi xảy ra trong quá trình tải âm thanh");
-                    };
-                });
-            }
+    }
+}
+class GameHelper {
+    constructor() {
+        this.viewPort = new Responsive();
+        this.loadingChecker = new LoadingChecker(this);
+        this.loader = new Loader();
+        this.init();
+    }
+    init() {
+        this.enableLandscapeFullscreen();
+        document.addEventListener("click", () => {
+            this.enableLandscapeFullscreen();
+        });
+        this.viewPort.listener(() => {
+            this.loader.init();
+            this.loader.updateDots();
+        });
+    }
+    initGame() {
+        this.loader.showWithLoadingEffect();
+        this.loadingChecker.checkAllResourcesLoaded(() => {
+            document.querySelector(".loading").classList.add("hidden");
+            document.querySelector("#canvas").classList.remove("topView");
+            let game = new Game();
+            game.init();
+            this.loader.showWithRotateEffect();
+        });
+    }
+    enableLandscapeFullscreen() {
+        if (this.isMobileDevice()) {
+            this.rotateToLandscape();
+            this.openFullscreen();
         }
+    }
+    isMobileDevice() {
+        return /Mobi|Android/i.test(window.navigator.userAgent);
+    }
 
-        class GameHelper {
-            constructor() {
-                this.viewPort = new Responsive();
-                this.loadingChecker = new LoadingChecker(this);
-                this.loader = new Loader();
-                this.init();
-            }
-
-            init() {
-                this.enableLandscapeFullscreen();
-                document.addEventListener("click", () => {
-                    this.enableLandscapeFullscreen();
-                });
-                this.viewPort.listener(() => {
-                    this.loader.init();
-                    this.loader.updateDots();
-                });
-            }
-
-            initGame() {
-                this.loader.showWithLoadingEffect();
-                this.loadingChecker.checkAllResourcesLoaded(() => {
-                    document.querySelector(".loading").classList.add("hidden");
-                    document.querySelector("#canvas").classList.remove("topView");
-                    let game = new Game();
-                    game.init();
-                    this.loader.showWithRotateEffect();
-                });
-            }
-
-            enableLandscapeFullscreen() {
-                if (this.isMobileDevice()) {
-                    this.rotateToLandscape();
-                    this.openFullscreen();
-                }
-            }
-
-            isMobileDevice() {
-                return /Mobi|Android/i.test(window.navigator.userAgent);
-            }
-
-            // Xoay màn hình ngang (landscape mode)
-            rotateToLandscape() {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock("landscape").catch(function (error) {
-                        console.error("Không thể xoay màn hình:", error);
-                    });
-                } else if (screen.orientation && screen.orientation.type.includes("portrait")) {
-                    screen.orientation.lock("landscape-primary").catch(function (error) {
-                        console.error("Không thể xoay màn hình:", error);
-                    });
-                }
-            }
-
-            // Mở chế độ toàn màn hình
-            openFullscreen() {
-                const docElm = document.documentElement;
-                if (docElm.requestFullscreen) {
-                    docElm.requestFullscreen();
-                } else if (docElm.mozRequestFullScreen) {
-                    // Firefox
-                    docElm.mozRequestFullScreen();
-                } else if (docElm.webkitRequestFullscreen) {
-                    // Chrome, Safari and Opera
-                    docElm.webkitRequestFullscreen();
-                } else if (docElm.msRequestFullscreen) {
-                    // IE/Edge
-                    docElm.msRequestFullscreen();
-                }
-            }
+    // Xoay màn hình ngang (landscape mode)
+    rotateToLandscape() {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock("landscape").catch(function (error) {
+                console.error("Không thể xoay màn hình:", error);
+            });
+        } else if (screen.orientation && screen.orientation.type.includes("portrait")) {
+            screen.orientation.lock("landscape-primary").catch(function (error) {
+                console.error("Không thể xoay màn hình:", error);
+            });
         }
     }
 
+    // Mở chế độ toàn màn hình
+    openFullscreen() {
+        const docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        } else if (docElm.mozRequestFullScreen) {
+            // Firefox
+            docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullscreen) {
+            // Chrome, Safari and Opera
+            docElm.webkitRequestFullscreen();
+        } else if (docElm.msRequestFullscreen) {
+            // IE/Edge
+            docElm.msRequestFullscreen();
+        }
     }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const gameHelper = new GameHelper();
     gameHelper.initGame();
