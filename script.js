@@ -870,5 +870,40 @@ showGuidePopup() {
         this.popup.render(14000);
     }, 500);
     // update sự kiện tiếp theo
+
 }
+    handleStartGame() {
+        this.startSound.stop();
+        if (!this.isPlayAgain) {
+            this.showGuidePopup();
+            return;
+        }
+        this.startGame();
+    }
+    handleBtnAskAdvisoryClick() {
+        this.advisoryGroupHelper.updateAnswerData(this.question.correctId);
+        this.screen.hideAnswerTable();
+        this.popup.update(_script.advisoryGroupHelper, () => {
+            this.popup.hide();
+            this.advisoryGroupHelper.showHelperList();
+            this.questionBgSound.stop();
+            this.waitSelectAdvisoryGroupSound.start(true);
+        });
+        this.popup.show();
+        this.popup.render(6000);
+    }
+    listener() {
+        this.screen.onBtnRemoveAnswerClick(() => {
+            this.handleBtnRemoveAnswerClick();
+        });
+        this.screen.onBtnAskAudienceClick(() => {
+            this.handleBtnAskViewerClick();
+        });
+        this.screen.onBtnAskAdvisoryGroupClick(() => {
+            this.handleBtnAskAdvisoryClick();
+        });
+        this.screen.onBtnStartGameClick(() => {
+            this.handleStartGame();
+        });
+    }
 }
