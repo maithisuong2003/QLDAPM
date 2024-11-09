@@ -714,3 +714,25 @@ isCanUsed(helper) {
     if (this.isUsingAnotherHelper) return false;
     return true;
 }
+
+createAnswer() {
+    this.answers = [];
+    const answers = this.question.answers;
+    answers.forEach((answer, index) => {
+        this.answers.push(new Answer(this, answer, index));
+    });
+}
+
+showQuestion() {
+    this.createAnswer();
+    this.screen.updatePrizeMoney();
+    const questionElement = document.querySelector(".question > span");
+    questionElement.innerHTML = this.question.question;
+    this.answers.forEach((answer) => {
+        answer.reset();
+        answer.render();
+        answer.onBtnAnswerClick((id, index) => {
+            this.handleUserSelectAnswer(id, index);
+        });
+    });
+}
