@@ -848,4 +848,27 @@ resetGame() {
     this.advisoryGroupHelper.reset();
     this.updateAudienceAnswer([0, 0, 0, 0]);
 }
+showGuidePopup() {
+    this.popup.show();
+    this.delay(() => {
+        this.explainRuleSound = new Sound("Sound/explain-rule.mp3");
+        this.explainRuleBgSound = new Sound("Sound/explain-rule-bg-sound.mp3");
+        this.explainRuleSound.start();
+        this.explainRuleBgSound.start(true);
+        this.popup.update(_script.introducePart1, () => {
+            this.explainRuleSound.stop();
+            this.explainRuleBgSound.stop();
+            this.startGameSound.start();
+            this.popup.update(_script.userAlready, () => {
+                this.startGameSound.stop();
+                this.startGame();
+                this.screen.hideLights();
+            });
+            this.popup.render(3000);
+            this.startGameSound.onEnd(() => this.startGame());
+        });
+        this.popup.render(14000);
+    }, 500);
+    // update sự kiện tiếp theo
+}
 }
