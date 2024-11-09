@@ -748,4 +748,17 @@ class Game {
         });
         this.questionBgSound.isStopped() && this.questionBgSound.start(true);
     }
+    handleBtnRemoveAnswerClick() {
+        let deletedCount = 0;
+        let deletedIndex = Infinity;
+        while (deletedCount < 2) {
+            const deleteIndex = Math.floor(Math.random() * this.answers.length);
+            if (this.question.correctId == this.answers[deleteIndex].id || deletedIndex == deleteIndex) continue;
+            this.answers[deleteIndex].remove();
+            this.answers[deleteIndex].isRemoved = true;
+            deletedIndex = deleteIndex;
+            deletedCount++;
+        }
+        this.isUsingAnotherHelper = false;
+    }
 }
