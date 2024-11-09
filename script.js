@@ -914,10 +914,12 @@ class Responsive {
         this.maintainAspectRatio();
         this.init();
     }
+
     init() {
         window.addEventListener("resize", this.maintainAspectRatio);
         window.addEventListener("orientationchange", this.maintainAspectRatio);
     }
+
     listener(callbackFunc) {
         window.addEventListener("resize", () => {
             callbackFunc();
@@ -926,6 +928,7 @@ class Responsive {
             callbackFunc();
         });
     }
+
     maintainAspectRatio() {
         const container = document.querySelector("#game");
         const aspectRatio = 1920 / 1080;
@@ -942,4 +945,71 @@ class Responsive {
         }
         container.style.fontSize = `${container.offsetWidth / 106}px`;
     }
+}
+    class LoadingChecker {
+    constructor(gameHelper) {
+        this.gameHelper = gameHelper;
+        this.images = resource.images;
+        this.audios = resource.audios;
+        this.loadedCount = 0;
+    }
+    updateProcess() {
+        this.loadedCount += 1;
+        // let sum = this.images.length + this.audios.length;
+        // const percent = (this.loadedCount / sum) * 100;
+        // const processBar = document.querySelector(".process-bar");
+        // processBar.style.width = `${percent}%`;
+    }
+
+    isAllResourceLoaded() {
+        if (this.loadedCount == this.images.length + this.audios.length) {
+            return true;
+        }
+        return false;
+    }
+    checkAllResourcesLoaded(handleLoaded) {
+        let loadingTime = 0;
+        const timeInterval =setInterval(() => {
+            loadingTime += 1;
+        }, 1000);
+        const showAlert = () => {
+            this.gameHelper.loader.showWithFlickerEffect();
+            document.querySelector(".alert").classList.remove("hidden");
+            document.querySelector("#alert-btn").addEventListener("click", () => handleLoaded());
+        };
+        const _handleLoaded = () => {
+            clearInterval(timeInterval);
+            if (loadingTime >= 3) {
+                return showAlert();
+            }
+            setTimeout(() => showAlert(), 3000);
+        };
+        this.images.forEach((imageSrc) => {
+            const image = new Image();
+            image.src = imageSrc;
+            image.onload = () => {
+                this.updateProcess();
+                if (this.isAllResourceLoaded()) {
+                    _handleLoaded();
+                }
+            };
+            image.onerror = () => {
+                alert("Có lỗi xảy ra trong quá trình tải hình ảnh");
+            };
+        });
+        this.audios.forEach((audioSrc) => {
+            const audio = new Audio(audioSrc);
+            audio.preload = "auto";
+            audio.addEventListener("canplaythrough", () => {
+                this.updateProcess();
+                if (this.isAllResourceLoaded()) {
+                    _handleLoaded();
+                }
+            });
+            audio.onerror = () => {
+                alert("Có lỗi xảy ra trong quá trình tải âm thanh");
+            };
+        });
+    }
+
 }
