@@ -552,3 +552,55 @@ class Loader {
         }, 100);
     }
 }
+const TIME = 30;
+class Game {
+    constructor() {
+        this.questionNumber = 1;
+        this.screen = new Screen(this);
+        this.isSelectedAnswer = false;
+        this.questionSound = null;
+        this.correctSound = null;
+        this.timer = new Timer(this);
+        this.answers = [];
+        this.isPlayAgain = false;
+        this.popup = new Popup("");
+        this.helpers = null;
+        this.question = null;
+        this.finalAnswerSound = new Sound("Sound/final-answer.mp3");
+        this.startSound = new Sound("Sound/start-sound.mp3");
+        this.gameOverSound = new Sound("Sound/game-over.mp3");
+        this.startGameSound = new Sound("Sound/start-game.mp3");
+        this.wrongAnswerSound = new Sound(`Sound/wrong-sound.mp3`);
+        this.timeUpSound = new Sound(`Sound/time-up.mp3`);
+        this.waitSelectAdvisoryGroupSound = new Sound("./Sound/ask-advisory-group-bg-sound.mp3");
+        this.selectAdvisoryGroupDoneSound = new Sound("./Sound/ask-advisory-group-done.mp3");
+        this.waitViewerAnswerSound = new Sound("Sound/wait-viewer-answer.mp3");
+        this.advisoryGroupHelper = new AdvisoryGroup(this);
+        this.isUsingAnotherHelper = false;
+        this.listener();
+        this.ctx = null;
+    }
+    init() {
+        this.questionBgSound = new Sound("Sound/first5BgSound.mp3");
+        this.questionNumber = 1;
+        this.question = Questions[this.questionNumber][0];
+        this.questionSound = new Sound(this.question.sound);
+        this.helpers = {
+            isRemoveWrongUsed: false,
+            isAskAudienceUsed: false,
+            isCallUsed: false,
+            isAdvisoryUsed: false,
+        };
+        this.screen.renderPrizeMoney();
+        this.isSelectedAnswer = false;
+        this.startSound.start();
+        this.startSound.onEnd(() => {
+            this.screen.hideLights();
+            this.screen.hideStartBtn();
+            this.handleStartGame();
+        });
+        this.screen.showLights(10000000, "2s");
+        this.delay(() => this.screen.updateLightsEffectTiming("4s"), 12000);
+        this.screen.showStartBtn();
+    }
+}
