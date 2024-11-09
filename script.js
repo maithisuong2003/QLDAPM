@@ -806,4 +806,38 @@ handleBtnAskViewerClick() {
     this.updateAudienceAnswer(percents);
     this.isUsingAnotherHelper = false;
 }
+startGame() {
+    this.popup.hide();
+    const display = document.querySelectorAll(".game>div.display");
+    display.forEach((element) => {
+        element.classList.remove("hidden");
+    });
+    this.showQuestion();
+    this.readQuestion();
+    this.questionBgSound.start(true);
+}
+stopGame() {
+    const display = document.querySelectorAll(".game>div.display");
+    display.forEach((element) => {
+        element.classList.add("hidden");
+    });
+    this.screen.hideAnswerTable();
+    this.advisoryGroupHelper.hideHelperList();
+    this.gameOverSound.start();
+    this.screen.showLights(1000000000, "4s");
+    this.popup.update(_script.stopGame(this.questionNumber), () => {
+        this.popup.update(_script.playAgain, () => {
+            this.popup.hide();
+            this.gameOverSound.stop();
+            this.delay(() => {
+                this.resetGame();
+            }, 300);
+        });
+        this.popup.render();
+    });
+    this.delay(() => {
+        this.popup.show();
+        this.popup.render(5000);
+    }, 300);
+}
 }
