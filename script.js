@@ -870,5 +870,14 @@ showGuidePopup() {
         this.popup.render(14000);
     }, 500);
     // update sự kiện tiếp theo
+
 }
+    handleStartGame() {
+        this.startSound.stop();
+        if (!this.isPlayAgain) {
+            this.showGuidePopup();
+            return;
+        }
+        this.startGame();
+    }
 }
