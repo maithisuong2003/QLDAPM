@@ -714,3 +714,11 @@ isCanUsed(helper) {
     if (this.isUsingAnotherHelper) return false;
     return true;
 }
+
+createAnswer() {
+    this.answers = [];
+    const answers = this.question.answers;
+    answers.forEach((answer, index) => {
+        this.answers.push(new Answer(this, answer, index));
+    });
+}
