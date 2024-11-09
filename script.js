@@ -580,4 +580,27 @@ class Game {
         this.listener();
         this.ctx = null;
     }
+    init() {
+        this.questionBgSound = new Sound("Sound/first5BgSound.mp3");
+        this.questionNumber = 1;
+        this.question = Questions[this.questionNumber][0];
+        this.questionSound = new Sound(this.question.sound);
+        this.helpers = {
+            isRemoveWrongUsed: false,
+            isAskAudienceUsed: false,
+            isCallUsed: false,
+            isAdvisoryUsed: false,
+        };
+        this.screen.renderPrizeMoney();
+        this.isSelectedAnswer = false;
+        this.startSound.start();
+        this.startSound.onEnd(() => {
+            this.screen.hideLights();
+            this.screen.hideStartBtn();
+            this.handleStartGame();
+        });
+        this.screen.showLights(10000000, "2s");
+        this.delay(() => this.screen.updateLightsEffectTiming("4s"), 12000);
+        this.screen.showStartBtn();
+    }
 }
