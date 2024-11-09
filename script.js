@@ -761,4 +761,49 @@ class Game {
         }
         this.isUsingAnotherHelper = false;
     }
+
+updateAudienceAnswer(percents) {
+    const answerCol = document.querySelectorAll(".result");
+    const answerNumber = document.querySelectorAll(".result-text");
+    percents.forEach((percent, index) => {
+        const maxHeight = document.querySelector(".table-col").offsetHeight * (90 / 100);
+        const height = (maxHeight * percent) / 100 < 15 ? 15 : (maxHeight * percent) / 100 + 15;
+        answerCol[index].style.height = `${height}px`;
+        answerNumber[index].innerHTML = percent + "%";
+    });
+}
+handleBtnAskViewerClick() {
+    let sumPercent = 70;
+    const percents = [0, 0, 0, 0];
+    for (let i = 0; i < 4; i++) {
+        if (this.answers[i].isRemoved) {
+            continue;
+        }
+        if (this.answers[i].id == this.question.correctId) {
+            percents[i] = 30;
+        }
+        if (i == 3) {
+            percents[3] += sumPercent;
+            sumPercent = 0;
+            continue;
+        }
+        const randomPercent = Math.round(Math.random() * sumPercent);
+        percents[i] += randomPercent;
+        sumPercent -= randomPercent;
+    }
+    if (sumPercent != 0) {
+        let foundOne = false;
+        for (let i = 0; i < 4; i++) {
+            if (this.answers[i].isRemoved) continue;
+            if (foundOne) {
+                percents[i] += Math.ceil(sumPercent / 2);
+                continue;
+            }
+            percents[i] += Math.floor(sumPercent / 2);
+            foundOne = true;
+        }
+    }
+    this.updateAudienceAnswer(percents);
+    this.isUsingAnotherHelper = false;
+}
 }
