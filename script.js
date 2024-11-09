@@ -680,4 +680,24 @@ class Game {
         }
     }
 
+    checkAnswer(answerId, correctAnswerProcess) {
+        if (answerId == this.question.correctId) {
+            correctAnswerProcess();
+        } else {
+            this.showCorrectAnswer();
+            this.questionBgSound.stop();
+            this.wrongAnswerSound.start();
+            this.wrongAnswerSound.onEnd(() => this.stopGame());
+        }
+    }
+
+    updateQuestion() {
+        this.questionNumber += 1;
+        this.question = Questions[this.questionNumber][0];
+        this.screen.hideAnswerTable();
+        this.advisoryGroupHelper.hideHelperList();
+        this.isSelectedAnswer = false;
+        this.timer.reset(TIME);
+    }
+
 }
