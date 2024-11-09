@@ -580,6 +580,7 @@ class Game {
         this.listener();
         this.ctx = null;
     }
+
     init() {
         this.questionBgSound = new Sound("Sound/first5BgSound.mp3");
         this.questionNumber = 1;
@@ -603,11 +604,13 @@ class Game {
         this.delay(() => this.screen.updateLightsEffectTiming("4s"), 12000);
         this.screen.showStartBtn();
     }
+
     delay(func, timing) {
         setTimeout(() => {
             func();
         }, timing);
     }
+
     handleUserSelectAnswer(answerId, index) {
         this.isSelectedAnswer = true;
         this.startSound.stop(); // need remove
@@ -700,39 +703,49 @@ class Game {
         this.timer.reset(TIME);
     }
 
-}
-showCorrectAnswer() {
-    this.answers.forEach((answer) => {
-        if (answer.id == this.question.correctId) {
-            answer.showCorrectAnswer();
-        }
-    });
-}
-isCanUsed(helper) {
-    if (this.isSelectedAnswer) return false;
-    if (this.helpers[helper]) return false;
-    if (this.isUsingAnotherHelper) return false;
-    return true;
-}
 
-createAnswer() {
-    this.answers = [];
-    const answers = this.question.answers;
-    answers.forEach((answer, index) => {
-        this.answers.push(new Answer(this, answer, index));
-    });
-}
-
-showQuestion() {
-    this.createAnswer();
-    this.screen.updatePrizeMoney();
-    const questionElement = document.querySelector(".question > span");
-    questionElement.innerHTML = this.question.question;
-    this.answers.forEach((answer) => {
-        answer.reset();
-        answer.render();
-        answer.onBtnAnswerClick((id, index) => {
-            this.handleUserSelectAnswer(id, index);
+    showCorrectAnswer() {
+        this.answers.forEach((answer) => {
+            if (answer.id == this.question.correctId) {
+                answer.showCorrectAnswer();
+            }
         });
-    });
+    }
+
+    isCanUsed(helper) {
+        if (this.isSelectedAnswer) return false;
+        if (this.helpers[helper]) return false;
+        if (this.isUsingAnotherHelper) return false;
+        return true;
+    }
+
+    createAnswer() {
+        this.answers = [];
+        const answers = this.question.answers;
+        answers.forEach((answer, index) => {
+            this.answers.push(new Answer(this, answer, index));
+        });
+    }
+
+    showQuestion() {
+        this.createAnswer();
+        this.screen.updatePrizeMoney();
+        const questionElement = document.querySelector(".question > span");
+        questionElement.innerHTML = this.question.question;
+        this.answers.forEach((answer) => {
+            answer.reset();
+            answer.render();
+            answer.onBtnAnswerClick((id, index) => {
+                this.handleUserSelectAnswer(id, index);
+            });
+        });
+    }
+    readQuestion() {
+        this.questionSound = new Sound(this.question.sound);
+        this.questionSound.start();
+        this.questionSound.onEnd(() => {
+            this.timer.updateTime();
+        });
+        this.questionBgSound.isStopped() && this.questionBgSound.start(true);
+    }
 }
