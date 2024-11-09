@@ -806,4 +806,14 @@ handleBtnAskViewerClick() {
     this.updateAudienceAnswer(percents);
     this.isUsingAnotherHelper = false;
 }
+startGame() {
+    this.popup.hide();
+    const display = document.querySelectorAll(".game>div.display");
+    display.forEach((element) => {
+        element.classList.remove("hidden");
+    });
+    this.showQuestion();
+    this.readQuestion();
+    this.questionBgSound.start(true);
+}
 }
