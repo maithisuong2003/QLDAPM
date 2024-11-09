@@ -691,4 +691,13 @@ class Game {
         }
     }
 
+    updateQuestion() {
+        this.questionNumber += 1;
+        this.question = Questions[this.questionNumber][0];
+        this.screen.hideAnswerTable();
+        this.advisoryGroupHelper.hideHelperList();
+        this.isSelectedAnswer = false;
+        this.timer.reset(TIME);
+    }
+
 }
