@@ -840,4 +840,12 @@ stopGame() {
         this.popup.render(5000);
     }, 300);
 }
+resetGame() {
+    this.isPlayAgain = true;
+    this.init();
+    this.screen.reset();
+    this.timer.reset(TIME);
+    this.advisoryGroupHelper.reset();
+    this.updateAudienceAnswer([0, 0, 0, 0]);
+}
 }
