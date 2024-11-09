@@ -603,4 +603,10 @@ class Game {
         this.delay(() => this.screen.updateLightsEffectTiming("4s"), 12000);
         this.screen.showStartBtn();
     }
+    delay(func, timing) {
+        setTimeout(() => {
+            func();
+        }, timing);
+    }
+
 }
