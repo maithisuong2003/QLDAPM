@@ -68,15 +68,15 @@ const Questions = {
                     id: 1,
                 },
                 {
-                    text: "B: Ninh Bình",
+                    text: "B: Bình Dương",
                     id: 2,
                 },
                 {
-                    text: "C: Bắc Ninh ",
+                    text: "C: Ninh Bình ",
                     id: 3,
                 },
                 {
-                    text: "D: Bình Dương.",
+                    text: "D: Bắc Ninh.",
                     id: 4,
                 },
             ],
